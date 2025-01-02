@@ -1,7 +1,7 @@
 # Copyright 2018-2019 Brainbean Apps
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -11,6 +11,8 @@ class AccountAnalyticLine(models.Model):
     exclude_from_sale_order = fields.Boolean(
         string="Non-billable",
         help="Checking this would exclude this timesheet entry from Sale Order",
+        groups="sale_timesheet_line_exclude.group_exclude_from_sale_order",
+        copy=False,
     )
 
     @api.constrains("exclude_from_sale_order")
@@ -21,7 +23,7 @@ class AccountAnalyticLine(models.Model):
                 and line.so_line.product_id.invoice_policy == "delivery"
             ):
                 raise ValidationError(
-                    _(
+                    self.env._(
                         "You can not modify timesheets in a way that would affect "
                         "invoices since these timesheets were already invoiced."
                     )
