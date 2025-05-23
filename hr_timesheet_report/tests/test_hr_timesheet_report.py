@@ -137,3 +137,24 @@ class TestHrTimesheetReportMultiProject(TestHrTimesheetReportBase):
         report = self._create_report_from_wizard(wizard)
         self.assertEqual(len(report.group_ids), 2)
         self.assertEqual(report.total_unit_amount, 10)  # 8 + 2
+
+    def test_get_amount_num_format_from_form(self):
+        Report = self.env["report.hr_timesheet_report.report"]
+        expected_formats = {
+            "decimal": "0.00",
+            "hh_mm": "[h]:mm",
+            "hh_mm_ss": "[h]:mm:ss",
+            "days": "0.00",
+        }
+        for time_format, expected in expected_formats.items():
+            wizard_form = Form(self.Wizard)
+            wizard_form.employee_ids.add(self.employee)
+            wizard_form.time_format = time_format
+            wizard = wizard_form.save()
+            report = self._create_report_from_wizard(wizard)
+            result = Report._get_amount_num_format(report)
+            self.assertEqual(
+                result,
+                expected,
+                f"Num format for '{time_format}' should be '{expected}', got '{result}'",
+            )
