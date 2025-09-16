@@ -71,11 +71,17 @@ Authors
 Contributors
 ------------
 
-- Holger Brunn <mail@hunki-enterprises.com>
-  (https://hunki-enterprises.com)
-- [Innovara](https://innovara.tech):
+- `Hunki Enterprises BV <https://hunki-enterprises.com>`__
+
+  - Holger Brunn <mail@hunki-enterprises.com>
+
+- `Innovara <https://innovara.tech>`__
 
   - Manuel Fombuena <mfombuena@innovara.tech>
+
+- `SISINFO <https://sisinfo.com.uy>`__
+
+  - Miguel Gómez León <mgomezleon@sisinfo.com.uy>
 
 Maintainers
 -----------
