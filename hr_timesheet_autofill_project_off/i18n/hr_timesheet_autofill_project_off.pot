@@ -12,3 +12,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: hr_timesheet_autofill_project_off
+#: model:ir.model,name:hr_timesheet_autofill_project_off.model_account_analytic_line
+msgid "Analytic Line"
+msgstr ""
