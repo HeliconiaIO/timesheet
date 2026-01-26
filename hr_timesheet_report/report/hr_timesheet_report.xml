@@ -16,7 +16,7 @@
                             <div class="col-lg-12">
                                 <h2>
                                     <span>Timesheets Report</span>
-                                    <span class="float-right text-right">
+                                    <span class="float-end text-end">
                                         <span
                                             t-if="report.time_format == 'hh_mm'"
                                             t-out="report.total_unit_amount"
@@ -151,7 +151,7 @@
                                         >
                                             <span t-field="field.field_title" />
                                         </th>
-                                        <th class="text-right">
+                                        <th class="text-end">
                                             <span t-field="uom_hour.name" />
                                         </th>
                                     </tr>
@@ -166,7 +166,7 @@
                                                 t-out="entry.render_value(field.field_name)"
                                             />
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             <span
                                                 t-if="report.time_format == 'hh_mm'"
                                                 t-field="entry.total_unit_amount"
@@ -192,9 +192,9 @@
                                         >
                                             <td />
                                         </t>
-                                        <td class="text-right"><strong
+                                        <td class="text-end"><strong
                                             >Subtotal</strong></td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             <strong
                                                 t-if="report.time_format == 'hh_mm'"
                                                 t-out="group.total_unit_amount"

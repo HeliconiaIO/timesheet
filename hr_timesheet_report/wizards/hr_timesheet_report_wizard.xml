@@ -12,10 +12,7 @@
             <form>
                 <field name="has_line_ids" invisible="1" />
                 <field name="line_ids" invisible="1" />
-                <group
-                    name="filter"
-                    attrs="{'invisible': [('has_line_ids', '=', True)]}"
-                >
+                <group name="filter" invisible="has_line_ids">
                     <group name="left_filter">
                         <field name="date_from" />
                         <field name="project_ids" widget="many2many_tags" />

@@ -161,7 +161,9 @@ class HrTimesheetReport(models.TransientModel):
             name_parts.append(name_part)
 
         return {
-            "name": reduce(lambda l, r: _("{l} » {r}").format(l=l, r=r), name_parts),
+            "name": reduce(
+                lambda line, r: _("{l} » {r}").format(l=line, r=r), name_parts
+            ),
             "scope": ustr(grouped_lines["__domain"]),
         }
 
@@ -212,9 +214,9 @@ class HrTimesheetReport(models.TransientModel):
         )
         if not action:
             raise UserError(
-                _(
-                    '"%(report_name)s" report with "%(report_type)s" type not found'
-                    % ({"report_name": report_name, "report_type": report_type})
+                _('"{report_name}" report with "{report_type}" type not found').format(
+                    report_name=report_name,
+                    report_type=report_type,
                 )
             )
 
@@ -266,7 +268,7 @@ class HrTimesheetReportAbstractField(models.AbstractModel):
     def _compute_groupby(self):
         for field in self:
             if field.aggregation:
-                field.groupby = "%s:%s" % (field.field_name, field.aggregation)
+                field.groupby = f"{field.field_name}:{field.aggregation}"
             else:
                 field.groupby = field.field_name
 
@@ -498,16 +500,17 @@ class Report(models.AbstractModel):
                     sheet.write_formula(
                         rows_emitted,
                         amount_column_index,
-                        "=SUM(%s:%s)"
-                        % (
+                        "=SUM({}:{})".format(
                             xl_rowcol_to_cell(rows_emitted + 1, amount_column_index),
                             xl_rowcol_to_cell(
-                                rows_emitted + len(group.entry_ids), amount_column_index
+                                rows_emitted + len(group.entry_ids),
+                                amount_column_index,
                             ),
                         ),
                         formats["section_total"],
                         self._convert_amount_num_format(
-                            report, group.total_unit_amount
+                            report,
+                            group.total_unit_amount,
                         ),
                     )
                     rows_emitted += 1
@@ -568,13 +571,15 @@ class Report(models.AbstractModel):
                 sheet.write_formula(
                     rows_emitted,
                     amount_column_index,
-                    "=SUM(%s:%s)"
-                    % (
+                    "=SUM({}:{})".format(
                         xl_rowcol_to_cell(1, amount_column_index),
                         xl_rowcol_to_cell(rows_emitted - 2, amount_column_index),
                     ),
                     formats["report_total_amount"],
-                    self._convert_amount_num_format(report, report.total_unit_amount),
+                    self._convert_amount_num_format(
+                        report,
+                        report.total_unit_amount,
+                    ),
                 )
 
     @api.model
