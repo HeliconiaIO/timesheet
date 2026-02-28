@@ -34,7 +34,7 @@ Features:
 
  * Select reported fields
  * Select and reorder report line grouping
- * Configure time format (HH:MM, HH:MM:SS, or decimal)
+ * Configure time format : Hours (HH:MM, HH:MM:SS, or decimal) or Days (decimal)
  * View in browser, export in PDF and XLSX formats
 
 **Table of contents**
