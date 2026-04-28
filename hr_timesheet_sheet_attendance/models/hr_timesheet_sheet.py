@@ -111,11 +111,6 @@ class HrTimesheetSheet(models.Model):
                     ("sheet_id", "=", False),
                     ("check_in", ">=", date_start_utc),
                     ("check_in", "<=", date_end_utc),
-                    "|",
-                    ("check_out", "=", False),
-                    "&",
-                    ("check_out", ">=", date_start_utc),
-                    ("check_out", "<=", date_end_utc),
                 ]
             )
         attendances.sudo()._compute_sheet_id()
