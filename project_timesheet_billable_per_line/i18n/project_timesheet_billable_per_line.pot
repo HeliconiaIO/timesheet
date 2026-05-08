@@ -6,8 +6,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 12:52+0000\n"
-"PO-Revision-Date: 2026-04-30 12:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -52,19 +50,19 @@ msgstr ""
 
 #. module: project_timesheet_billable_per_line
 #. odoo-python
-#: code:addons/project_timesheet_billable_per_line/models/hr_timesheet.py:0
+#: code:addons/project_timesheet_billable_per_line/models/account_analytic_line.py:0
 #, python-format
 msgid "One or more lines have no customer set."
 msgstr ""
 
 #. module: project_timesheet_billable_per_line
 #: model:ir.model.fields,field_description:project_timesheet_billable_per_line.field_account_analytic_line__sale_order_line_id
-msgid "Sales Order Line"
+msgid "Sale Order Line"
 msgstr ""
 
 #. module: project_timesheet_billable_per_line
 #. odoo-python
-#: code:addons/project_timesheet_billable_per_line/models/hr_timesheet.py:0
+#: code:addons/project_timesheet_billable_per_line/models/account_analytic_line.py:0
 #, python-format
 msgid "Sales Orders"
 msgstr ""
