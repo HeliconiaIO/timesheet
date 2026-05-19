@@ -8,7 +8,7 @@
     "category": "Human Resources",
     "maintainers": ["alexey-pelykh"],
     "website": "https://github.com/OCA/timesheet",
-    "author": "CorporateHub, " "Odoo Community Association (OCA)",
+    "author": "CorporateHub, Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "installable": True,
     "application": False,
