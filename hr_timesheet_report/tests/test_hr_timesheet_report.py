@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 
 from psycopg2 import IntegrityError
 
-from odoo import fields
+from odoo import Command, fields
 from odoo.exceptions import UserError
 from odoo.tests import Form
 from odoo.tools import mute_logger
@@ -73,7 +73,7 @@ class TestHrTimesheetReport(TestHrTimesheetReportBase):
     @mute_logger("odoo.models.unlink")
     def test_no_grouping(self):
         wizard_form = Form(
-            self.Wizard.with_context(default_grouping_field_ids=[(5, False, False)])
+            self.Wizard.with_context(default_grouping_field_ids=[Command.clear()])
         )
         wizard_form.date_from = self.today
         wizard_form.date_to = self.today
@@ -141,7 +141,7 @@ class TestAccountAnalyticLineTimesheetWizardAction(TestHrTimesheetReportMultiPro
         self.assertEqual(res["target"], "new")
         self.assertEqual(
             res["context"].get("default_line_ids"),
-            [(6, False, [self.timesheet_1.id])],
+            [Command.set([self.timesheet_1.id])],
         )
         wizard_form = Form(self.env[res["res_model"]].with_context(**res["context"]))
         wizard = wizard_form.save()
@@ -189,18 +189,18 @@ class TestHrTimesheetReportExtraCoverage(TestHrTimesheetReportBase):
 
     @mute_logger("odoo.models.unlink")
     def test_get_domain_line_ids_priority(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         self.assertEqual(report._get_domain(), [("id", "in", [self.timesheet_1.id])])
 
     @mute_logger("odoo.models.unlink")
     def test_get_action_unsupported_type_raises(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         with self.assertRaises(UserError):
             report.get_action("nope")
 
     @mute_logger("odoo.models.unlink")
     def test_get_action_report_not_found_raises(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         IrActionsReportModel = type(self.env["ir.actions.report"])
 
         def _fake_search(self, domain, limit=None, **kwargs):
@@ -213,7 +213,7 @@ class TestHrTimesheetReportExtraCoverage(TestHrTimesheetReportBase):
 
     @mute_logger("odoo.models.unlink")
     def test_get_group_values_not_set_and_separator(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         self.GroupByField.create(
             {
                 "report_id": report.id,
@@ -245,7 +245,7 @@ class TestHrTimesheetReportExtraCoverage(TestHrTimesheetReportBase):
 
     @mute_logger("odoo.models.unlink")
     def test_field_groupby_compute_with_and_without_aggregation(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         f1 = self.EntryField.create(
             {
                 "report_id": report.id,
@@ -270,7 +270,7 @@ class TestHrTimesheetReportExtraCoverage(TestHrTimesheetReportBase):
 
     @mute_logger("odoo.models.unlink")
     def test_field_name_unique_sql_constraint(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         self.EntryField.create(
             {
                 "report_id": report.id,
@@ -294,7 +294,7 @@ class TestHrTimesheetReportExtraCoverage(TestHrTimesheetReportBase):
 
     @mute_logger("odoo.models.unlink")
     def test_entry_field_cell_classes(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         char_f = self.EntryField.create(
             {
                 "report_id": report.id,
@@ -318,7 +318,7 @@ class TestHrTimesheetReportExtraCoverage(TestHrTimesheetReportBase):
 
     @mute_logger("odoo.models.unlink")
     def test_group_get_entry_values_domain_vs_id(self):
-        report = self._create_min_report(line_ids=[(6, 0, [self.timesheet_1.id])])
+        report = self._create_min_report(line_ids=[Command.set([self.timesheet_1.id])])
         group = self.Group.create(
             {
                 "report_id": report.id,
@@ -362,7 +362,7 @@ class TestHrTimesheetReportExtraBranches(BaseCommon):
             {"name": "T", "project_id": cls.project.id}
         )
         cls.employee_tag = cls.env["hr.employee.category"].create({"name": "Tag"})
-        cls.employee.category_ids = [(4, cls.employee_tag.id)]
+        cls.employee.category_ids = [Command.link(cls.employee_tag.id)]
         cls.timesheet = cls.env["account.analytic.line"].create(
             {
                 "project_id": cls.project.id,
@@ -376,9 +376,7 @@ class TestHrTimesheetReportExtraBranches(BaseCommon):
 
     def _entry_field_cmd(self):
         return [
-            (
-                0,
-                0,
+            Command.create(
                 {
                     "sequence": 10,
                     "field_name": "name",
@@ -393,12 +391,10 @@ class TestHrTimesheetReportExtraBranches(BaseCommon):
         report = self.Report.create(
             {
                 "time_format": "decimal",
-                "line_ids": [(6, 0, [self.timesheet.id])],
+                "line_ids": [Command.set([self.timesheet.id])],
                 "entry_field_ids": self._entry_field_cmd(),
                 "groupby_field_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "sequence": 10,
                             "field_name": "project_id",
@@ -421,10 +417,10 @@ class TestHrTimesheetReportExtraBranches(BaseCommon):
                 "time_format": "decimal",
                 "date_from": self.today,
                 "date_to": self.today,
-                "project_ids": [(6, 0, [self.project.id])],
-                "task_ids": [(6, 0, [self.task.id])],
-                "employee_category_ids": [(6, 0, [self.employee_tag.id])],
-                "department_ids": [(6, 0, [self.department.id])],
+                "project_ids": [Command.set([self.project.id])],
+                "task_ids": [Command.set([self.task.id])],
+                "employee_category_ids": [Command.set([self.employee_tag.id])],
+                "department_ids": [Command.set([self.department.id])],
                 "entry_field_ids": self._entry_field_cmd(),
             }
         )
@@ -439,8 +435,10 @@ class TestHrTimesheetReportExtraBranches(BaseCommon):
         report = self.Report.create(
             {
                 "time_format": "decimal",
-                "line_ids": [(6, 0, [self.timesheet.id])],
-                "groupby_field_ids": [(5, 0, 0)],  # no grouping => group.name == None
+                "line_ids": [Command.set([self.timesheet.id])],
+                "groupby_field_ids": [
+                    Command.clear()
+                ],  # no grouping => group.name == None
                 # len == 1 => amount_column_index == 1
                 "entry_field_ids": self._entry_field_cmd(),
             }

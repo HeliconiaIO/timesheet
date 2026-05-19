@@ -6,9 +6,8 @@ from functools import reduce
 
 from xlsxwriter.utility import xl_rowcol_to_cell
 
-from odoo import api, fields, models
+from odoo import Command, api, fields, models
 from odoo.exceptions import UserError
-from odoo.osv.expression import TRUE_DOMAIN
 from odoo.tools.safe_eval import safe_eval
 
 
@@ -106,23 +105,24 @@ class HrTimesheetReport(models.TransientModel):
         AccountAnalyticLine = self.env["account.analytic.line"]
 
         for report in self:
-            group_ids = [(5, False, False)]
+            group_ids = [Command.clear()]
 
             if report.groupby_field_ids:
-                grouped_lines = AccountAnalyticLine.read_group(
-                    domain=report._get_domain(),
-                    fields=list(
-                        set(report.entry_field_ids.mapped("field_name"))
-                        | set(report.groupby_field_ids.mapped("field_name"))
-                    ),
+                domain = report._get_domain()
+                grouped_lines = AccountAnalyticLine.formatted_read_group(
+                    domain=domain,
                     groupby=report.groupby_field_ids.mapped("groupby"),
-                    orderby=", ".join(
-                        report.groupby_field_ids.mapped("field_name"),
+                    aggregates=["__count"],
+                    order=", ".join(
+                        report.groupby_field_ids.mapped("groupby"),
                     ),
-                    lazy=False,
                 )
 
                 for group_data in grouped_lines:
+                    # Provide __domain for backward compatibility with _get_group_values
+                    group_data["__domain"] = domain + group_data.get(
+                        "__extra_domain", []
+                    )
                     group_values = report._get_group_values(group_data)
                     if not group_values:
                         continue
@@ -132,17 +132,15 @@ class HrTimesheetReport(models.TransientModel):
                             "sequence": len(group_ids),
                         }
                     )
-                    group_ids.append((0, False, group_values))
+                    group_ids.append(Command.create(group_values))
             else:
                 group_ids.append(
-                    (
-                        0,
-                        False,
+                    Command.create(
                         {
                             "sequence": len(group_ids),
                             "name": None,
                             "scope": str(report._get_domain()),
-                        },
+                        }
                     )
                 )
             report.group_ids = group_ids
@@ -268,19 +266,18 @@ class HrTimesheetReportAbstractField(models.AbstractModel):
         compute="_compute_groupby",
     )
 
-    _sql_constraints = [
-        (
-            "field_name_uniq",
-            "UNIQUE(report_id, field_name)",
-            "Field can be reported only once!",
-        ),
-    ]
+    _field_name_uniq = models.Constraint(
+        "UNIQUE(report_id, field_name)",
+        "Field can be reported only once!",
+    )
 
-    @api.depends("field_name", "aggregation")
+    @api.depends("field_name", "aggregation", "field_type")
     def _compute_groupby(self):
         for field in self:
             if field.aggregation:
                 field.groupby = f"{field.field_name}:{field.aggregation}"
+            elif field.field_type in ("date", "datetime"):
+                field.groupby = f"{field.field_name}:day"
             else:
                 field.groupby = field.field_name
 
@@ -350,20 +347,19 @@ class HrTimesheetReportGroup(models.TransientModel):
         AccountAnalyticLine = self.env["account.analytic.line"]
 
         for group in self:
-            grouped_lines = AccountAnalyticLine.read_group(
-                domain=safe_eval(group.scope) if group.scope else TRUE_DOMAIN,
-                fields=list(
-                    {"id"} | set(group.report_id.entry_field_ids.mapped("field_name"))
-                ),
+            domain = safe_eval(group.scope) if group.scope else []
+            grouped_lines = AccountAnalyticLine.formatted_read_group(
+                domain=domain,
                 groupby=group.report_id.entry_field_ids.mapped("groupby"),
-                orderby=", ".join(
-                    group.report_id.entry_field_ids.mapped("field_name"),
+                aggregates=["__count"],
+                order=", ".join(
+                    group.report_id.entry_field_ids.mapped("groupby"),
                 ),
-                lazy=False,
             )
 
-            entry_ids = [(5, False, False)]
+            entry_ids = [Command.clear()]
             for entry_data in grouped_lines:
+                entry_data["__domain"] = domain + entry_data.get("__extra_domain", [])
                 entry_values = group._get_entry_values(entry_data)
                 if not entry_values:
                     continue
@@ -373,7 +369,7 @@ class HrTimesheetReportGroup(models.TransientModel):
                         "sequence": len(entry_ids),
                     }
                 )
-                entry_ids.append((0, False, entry_values))
+                entry_ids.append(Command.create(entry_values))
             group.entry_ids = entry_ids
 
     @api.depends("entry_ids.total_unit_amount")
@@ -425,7 +421,7 @@ class HrTimesheetReportEntry(models.TransientModel):
 
         for entry in self:
             entry.any_line_id = AccountAnalyticLine.search(
-                safe_eval(entry.scope) if entry.scope else TRUE_DOMAIN,
+                safe_eval(entry.scope) if entry.scope else [],
                 limit=1,
             )
 
@@ -437,7 +433,7 @@ class HrTimesheetReportEntry(models.TransientModel):
         for entry in self:
             total_unit_amount = 0.0
             line_ids = AccountAnalyticLine.search(
-                safe_eval(entry.scope) if entry.scope else TRUE_DOMAIN
+                safe_eval(entry.scope) if entry.scope else []
             )
             for line_id in line_ids:
                 total_unit_amount += line_id.product_uom_id._compute_quantity(
@@ -666,5 +662,9 @@ class Report(models.AbstractModel):
             sheet.write_datetime(row, col, raw_value, formats["cell_datetime"])
         elif field.field_type == "date":
             sheet.write_datetime(row, col, raw_value, formats["cell_date"])
+        elif field.field_type in ("monetary", "float", "integer"):
+            sheet.write_number(row, col, raw_value or 0, formats["cell_generic"])
         else:
+            if not isinstance(value, str):
+                value = str(value) if value or value == 0 else ""
             sheet.write(row, col, html.unescape(value), formats["cell_generic"])

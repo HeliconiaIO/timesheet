@@ -1,3 +1,4 @@
+from odoo import Command
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import mute_logger
 
@@ -12,15 +13,13 @@ class TestHrTimesheetReportWizardExtra(BaseCommon):
 
     def _entry_field_cmd(self):
         return [
-            (
-                0,
-                0,
+            Command.create(
                 {
                     "sequence": 10,
                     "field_name": "name",
                     "field_title": "Name",
                     "field_type": "char",
-                },
+                }
             )
         ]
 
@@ -44,9 +43,9 @@ class TestHrTimesheetReportWizardExtra(BaseCommon):
         with self.assertRaises(ValidationError):
             self.Wizard.create(
                 {
-                    "grouping_field_ids": [(5, False, False)],
+                    "grouping_field_ids": [Command.clear()],
                     "entry_field_ids": [
-                        (5, False, False)
+                        Command.clear()
                     ],  # key exists, but empty => constraint
                 }
             )
@@ -55,17 +54,15 @@ class TestHrTimesheetReportWizardExtra(BaseCommon):
     def test_action_export_html_target_main_when_no_lines(self):
         wizard = self.Wizard.create(
             {
-                "grouping_field_ids": [(5, False, False)],
+                "grouping_field_ids": [Command.clear()],
                 "entry_field_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
                             "sequence": 10,
                             "field_name": "name",
                             "field_title": "Name",
                             "field_type": "char",
-                        },
+                        }
                     )
                 ],
             }
@@ -77,7 +74,7 @@ class TestHrTimesheetReportWizardExtra(BaseCommon):
     def test_action_export_xlsx_calls_generate_report(self):
         wizard = self.Wizard.create(
             {
-                "grouping_field_ids": [(5, False, False)],
+                "grouping_field_ids": [Command.clear()],
                 "entry_field_ids": self._entry_field_cmd(),
             }
         )

@@ -3,3 +3,5 @@
   - Alexey Pelykh \<alexey.pelykh@corphub.eu\>
 - [Tecnativa](https://www.tecnativa.com):
   - Víctor Martínez
+- [Heliconia Solutions Pvt. Ltd.](https://www.heliconia.io)
+  - Bhavesh Heliconia

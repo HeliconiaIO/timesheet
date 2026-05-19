@@ -1,7 +1,7 @@
 # Copyright 2018-2020 Brainbean Apps (https://brainbeanapps.com)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import Command, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -69,7 +69,7 @@ class HrTimesheetReportWizard(models.TransientModel):
                 # In order to avoid empty set being replaced with default value:
                 vals.update(
                     {
-                        "grouping_field_ids": [(5, False, False)],
+                        "grouping_field_ids": [Command.clear()],
                     }
                 )
             if "entry_field_ids" not in vals:
@@ -80,9 +80,7 @@ class HrTimesheetReportWizard(models.TransientModel):
 
     @api.model
     def _default_grouping_field_ids(self):
-        return list(
-            map(lambda values: (0, False, values), self._get_default_grouping_fields())
-        )
+        return list(map(Command.create, self._get_default_grouping_fields()))
 
     @api.model
     def _get_default_grouping_fields(self):
@@ -103,9 +101,7 @@ class HrTimesheetReportWizard(models.TransientModel):
 
     @api.model
     def _default_entry_field_ids(self):
-        return list(
-            map(lambda values: (0, False, values), self._get_default_entry_fields())
-        )
+        return list(map(Command.create, self._get_default_entry_fields()))
 
     @api.model
     def _get_default_entry_fields(self):
@@ -167,23 +163,23 @@ class HrTimesheetReportWizard(models.TransientModel):
     def _collect_report_values(self):
         self.ensure_one()
         return {
-            "line_ids": [(6, False, self.line_ids.ids)],
+            "line_ids": [Command.set(self.line_ids.ids)],
             "date_from": self.date_from,
             "date_to": self.date_to,
-            "project_ids": [(6, False, self.project_ids.ids)],
-            "task_ids": [(6, False, self.task_ids.ids)],
-            "employee_ids": [(6, False, self.employee_ids.ids)],
-            "employee_category_ids": [(6, False, self.employee_category_ids.ids)],
-            "department_ids": [(6, False, self.department_ids.ids)],
+            "project_ids": [Command.set(self.project_ids.ids)],
+            "task_ids": [Command.set(self.task_ids.ids)],
+            "employee_ids": [Command.set(self.employee_ids.ids)],
+            "employee_category_ids": [Command.set(self.employee_category_ids.ids)],
+            "department_ids": [Command.set(self.department_ids.ids)],
             "groupby_field_ids": list(
                 map(
-                    lambda x: (0, False, x._collect_report_values()),
+                    lambda x: Command.create(x._collect_report_values()),
                     self.grouping_field_ids,
                 )
             ),
             "entry_field_ids": list(
                 map(
-                    lambda x: (0, False, x._collect_report_values()),
+                    lambda x: Command.create(x._collect_report_values()),
                     self.entry_field_ids,
                 )
             ),
@@ -227,7 +223,7 @@ class HrTimesheetReportWizardField(models.AbstractModel):
 
     @api.model
     def _field_selectable(self, field, definition):
-        return True
+        return definition.get("store", True)
 
     @api.depends("field_name")
     def _compute_field_title(self):

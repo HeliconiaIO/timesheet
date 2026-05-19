@@ -1,7 +1,7 @@
 # Copyright 2018-2020 Brainbean Apps (https://brainbeanapps.com)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models
+from odoo import Command, models
 
 
 class AccountAnalyticLine(models.Model):
@@ -14,6 +14,6 @@ class AccountAnalyticLine(models.Model):
             "views": [[False, "form"]],
             "target": "new",
             "context": {
-                "default_line_ids": [(6, False, self.ids)],
+                "default_line_ids": [Command.set(self.ids)],
             },
         }
