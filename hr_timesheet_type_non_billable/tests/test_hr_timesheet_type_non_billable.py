@@ -1,7 +1,7 @@
-from odoo.tests.common import TransactionCase
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class TestHrTimesheetTypeNonBillable(TransactionCase):
+class TestHrTimesheetTypeNonBillable(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

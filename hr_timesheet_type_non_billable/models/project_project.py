@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, models
+from odoo.fields import Domain
 
 
 class Project(models.Model):
@@ -12,7 +13,7 @@ class Project(models.Model):
         res = super()._compute_remaining_hours()
 
         timesheets_read_group = self.env["account.analytic.line"]._read_group(
-            [("project_id", "in", self.ids), ("non_billable", "=", False)],
+            Domain([("project_id", "in", self.ids), ("non_billable", "=", False)]),
             ["project_id"],
             ["unit_amount:sum"],
         )
