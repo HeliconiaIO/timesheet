@@ -24,7 +24,7 @@ except ImportError:
     HAS_TIMESHEET_SHEET = False
 
 
-@tagged("post_install", "-at_install")
+@tagged("post_install", "-at_install", "hola")
 class TestProjectTimesheetHolidays(TransactionCase):
     @classmethod
     def setUpClass(cls):
@@ -105,7 +105,7 @@ class TestProjectTimesheetHolidays(TransactionCase):
                 "number_of_days": 10,
             }
         )
-        allocation.action_approve()
+        allocation.action_validate()
 
         leave = self.Leave.create(
             {
@@ -117,7 +117,7 @@ class TestProjectTimesheetHolidays(TransactionCase):
             }
         )
 
-        leave.action_approve()
+        leave.action_validate()
 
         ts = self.AnalyticLine.search([("holiday_id", "=", leave.id)], limit=1)
 
