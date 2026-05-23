@@ -6,24 +6,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2026-05-23 17:18+0000\n"
+"Last-Translator: Pablo Castelo <pablocv@gmx.es>\n"
 "Language-Team: none\n"
 "Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.15.2\n"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__amount
 #: model_terms:ir.ui.view,arch_db:sale_timesheet_budget.view_project_project_budget_tree
 msgid "Amount"
-msgstr ""
+msgstr "Importe"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__analytic_account_id
 msgid "Analytic Account"
-msgstr ""
+msgstr "Conta analítica"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,help:sale_timesheet_budget.field_project_project_budget__analytic_account_id
@@ -37,7 +39,7 @@ msgstr ""
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project__budget_amount
 msgid "Budget Amount"
-msgstr ""
+msgstr "Importe de orzamento"
 
 #. module: sale_timesheet_budget
 #. odoo-python
@@ -46,7 +48,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:sale_timesheet_budget.project_project_view_form
 #, python-format
 msgid "Budgets"
-msgstr ""
+msgstr "Orzamentos"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__name
@@ -56,12 +58,12 @@ msgstr ""
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "Creado por"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__create_date
 msgid "Created on"
-msgstr ""
+msgstr "Creado o"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__date
@@ -71,38 +73,38 @@ msgstr ""
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nome mostrado"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__id
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget____last_update
 msgid "Last Modified on"
-msgstr ""
+msgstr "Última modificación o"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "Última Actualización por"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "Actualizado o"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__price_unit
 msgid "Product Price"
-msgstr ""
+msgstr "Prezo de produto"
 
 #. module: sale_timesheet_budget
 #: model:ir.model,name:sale_timesheet_budget.model_project_project
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__project_id
 msgid "Project"
-msgstr ""
+msgstr "Proxecto"
 
 #. module: sale_timesheet_budget
 #: model:ir.actions.act_window,name:sale_timesheet_budget.action_project_project_budget
@@ -117,12 +119,12 @@ msgstr ""
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__quantity
 msgid "Quantity"
-msgstr ""
+msgstr "Cantidade"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__sale_order_id
 msgid "Sale Order"
-msgstr ""
+msgstr "Pedido de venda"
 
 #. module: sale_timesheet_budget
 #: model:ir.model.fields,field_description:sale_timesheet_budget.field_project_project_budget__sale_order_id_domain
